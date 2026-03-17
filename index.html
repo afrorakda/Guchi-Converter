@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guchi-Converter | AIがあなたの理性を代行します</title>
+    <meta name="description" content="ムカついた勢いで書いた文章を、そのまま送れる「報告書」に。感情を機能へ変換する単機能ツール。">
+    <style>
+        body {
+            font-family: -apple-system, "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 { 
+            color: #007bff; 
+            font-size: 1.8rem; 
+            margin-bottom: 5px; 
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin-bottom: 15px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        textarea:focus {
+            border-color: #007bff;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,123,255,0.2);
+            transition: background-color 0.2s;
+        }
+        button:active {
+            background-color: #0056b3;
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        #output-area {
+            width: 100%;
+            min-height: 120px;
+            padding: 20px;
+            background-color: #fff;
+            border-left: 6px solid #28a745;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #444;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .result-label {
+            display: block;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .loading { 
+            color: #888; 
+            font-style: italic; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Guchi-Converter</h1>
+    <p class="subtitle">AIがあなたの理性を代行します</p>
+
+    <textarea id="input-text" placeholder="例：さっき言ったことと全然違うじゃん！いい加減にして！"></textarea>
+
+    <button onclick="convertGuchi()">プロの報告書に変換</button>
+
+    <div id="output-area"></div>
+</div>
+
+<script>
+    async function convertGuchi() {
+        const input = document.getElementById('input-text').value;
+        const output = document.getElementById('output-area');
+
+        if (!input) return;
+
+        // 画面の動きを確認するためのダミー処理
+        output.style.display = 'block';
+        output.innerHTML = '<div class="loading">理性を生成中...</div>';
+
+        // 1.5秒後にダミー変換結果を表示
+        setTimeout(() => {
+            output.innerHTML = `<span class="result-label">【理性代行済み】</span>
+            前回の指示内容と現状に相違が見受けられます。プロジェクトの円滑な進行のため、改めて認識の再同期をお願いしたく存じます。`;
+        }, 1500);
+    }
+</script>
+
+</body>
+</html>
