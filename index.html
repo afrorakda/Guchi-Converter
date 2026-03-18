@@ -3,28 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guchi-Converter | AIがあなたの理性を代行します</title>
-    <meta name="description" content="ムカついた勢いで書いた文章を、そのまま送れる「報告書」に。AIがあなたの理性を代行します。">
+    <title>Guchi-Converter | 理性代行</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; padding: 20px; margin: 0; color: #333; }
+        body { font-family: -apple-system, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; margin: 0; color: #333; }
         .container { width: 100%; max-width: 400px; text-align: center; position: relative; }
-        h1 { color: #007bff; font-size: 1.8rem; margin-bottom: 5px; }
-        .subtitle { font-size: 0.9rem; color: #666; margin-bottom: 25px; }
-        textarea { width: 100%; height: 150px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; margin-bottom: 15px; resize: none; outline: none; }
-        textarea:focus { border-color: #007bff; }
-        button { width: 100%; padding: 16px; background-color: #007bff; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        button:active { background-color: #0056b3; transform: translateY(2px); }
-        #output-area { width: 100%; min-height: 120px; padding: 20px; background-color: #fff; border-left: 6px solid #28a745; border-radius: 8px; text-align: left; margin-top: 20px; display: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .result-label { display: block; font-weight: bold; color: #28a745; margin-bottom: 10px; font-size: 0.8rem; }
-        .loading { color: #888; font-style: italic; text-align: center; }
+        h1 { color: #007bff; font-size: 1.8rem; margin: 10px 0 5px; }
+        .subtitle { font-size: 0.85rem; color: #666; margin-bottom: 20px; }
         
-        /* 隠し扉 */
-        .secret-gate { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; cursor: pointer; opacity: 0; }
-        #settings-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100; width: 85%; max-width: 320px; }
-        #settings-modal h3 { margin-top: 0; font-size: 1.2rem; }
-        #settings-modal input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        .modal-btn { background: #333; color: white; padding: 10px; width: 100%; border-radius: 8px; border: none; cursor: pointer; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99; }
+        /* 入力エリア */
+        textarea { width: 100%; height: 140px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; margin-bottom: 10px; resize: none; outline: none; transition: border-color 0.3s; }
+        textarea:focus { border-color: #007bff; }
+        
+        /* ボタン類 */
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .btn-convert { grid-column: span 2; background-color: #007bff; color: white; font-size: 17px; margin-bottom: 5px; }
+        .btn-convert:active { background-color: #0056b3; transform: scale(0.98); }
+        .btn-clear { background-color: #e4e6eb; color: #4b4b4b; }
+        .btn-copy { background-color: #28a745; color: white; display: none; }
+        
+        /* 出力エリア */
+        #output-area { width: 100%; min-height: 100px; padding: 20px; background-color: #fff; border-left: 6px solid #28a745; border-radius: 8px; text-align: left; margin-top: 15px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-size: 15px; line-height: 1.6; }
+        .result-label { display: block; font-weight: bold; color: #28a745; margin-bottom: 8px; font-size: 0.75rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .loading { color: #888; text-align: center; padding: 20px; font-style: italic; }
+
+        /* 隠し設定画面 */
+        .secret-gate { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; cursor: pointer; z-index: 10; }
+        #settings-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); z-index: 100; width: 85%; max-width: 320px; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 99; }
+        #api-key-input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -33,20 +40,23 @@
     <h1>Guchi-Converter</h1>
     <p class="subtitle">AIがあなたの理性を代行します</p>
 
-    <textarea id="input-text" placeholder="例：さっき言ったことと全然違うじゃん！いい加減にして！"></textarea>
-    <button id="convert-btn" onclick="convertGuchi()">プロの報告書に変換</button>
+    <textarea id="input-text" placeholder="ここに愚痴を入力... (例: beef, onion... じゃなくて怒りの感情を！)"></textarea>
+    
+    <div class="btn-group">
+        <button class="btn-convert" onclick="convertGuchi()">プロの報告書に変換</button>
+        <button class="btn-clear" onclick="clearAll()">クリア</button>
+        <button id="copy-btn" class="btn-copy" onclick="copyResult()">コピー</button>
+    </div>
 
     <div id="output-area"></div>
 </div>
 
 <div class="overlay" id="overlay" onclick="toggleSettings()"></div>
 <div class="secret-gate" onclick="toggleSettings()"></div>
-
 <div id="settings-modal">
-    <h3>API Settings</h3>
-    <p style="font-size: 0.8rem; color: #666;">OpenAIのAPIキー（sk-...）を入力してください。</p>
+    <h3 style="margin:0">API Settings</h3>
     <input type="password" id="api-key-input" placeholder="sk-...">
-    <button class="modal-btn" onclick="saveSettings()">Save Key</button>
+    <button style="background:#333; color:white; width:100%; padding:10px; border-radius:8px; border:none;" onclick="saveSettings()">Save Key</button>
 </div>
 
 <script>
@@ -60,40 +70,47 @@
 
     function saveSettings() {
         const key = document.getElementById('api-key-input').value.trim();
-        if (key) {
-            localStorage.setItem('guchi_api_key', key);
-            alert('キーを保存しました。');
-            toggleSettings();
-        }
+        if (key) { localStorage.setItem('guchi_api_key', key); alert('Key Saved!'); toggleSettings(); }
+    }
+
+    function clearAll() {
+        document.getElementById('input-text').value = '';
+        const output = document.getElementById('output-area');
+        output.style.display = 'none';
+        document.getElementById('copy-btn').style.display = 'none';
+    }
+
+    async function copyResult() {
+        const text = document.getElementById('output-area').innerText.replace('【理性代行済み】', '').trim();
+        await navigator.clipboard.writeText(text);
+        const copyBtn = document.getElementById('copy-btn');
+        copyBtn.innerText = 'コピー完了！';
+        setTimeout(() => { copyBtn.innerText = 'コピー'; }, 2000);
     }
 
     async function convertGuchi() {
         const input = document.getElementById('input-text').value.trim();
         const output = document.getElementById('output-area');
+        const copyBtn = document.getElementById('copy-btn');
         const key = localStorage.getItem('guchi_api_key');
 
         if (!input) return;
-        if (!key) {
-            alert('右下の隠しボタンからAPIキーを設定してください。');
-            return;
-        }
+        if (!key) { alert('右下の隠しボタンから設定してください'); return; }
 
         output.style.display = 'block';
-        output.innerHTML = '<div class="loading">理性を代行中...</div>';
+        output.innerHTML = '<div class="loading">高度な理性を構築中...</div>';
+        copyBtn.style.display = 'none';
 
         try {
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${key}`
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
                 body: JSON.stringify({
                     model: "gpt-4o-mini",
                     messages: [
                         {
                             role: "system",
-                            content: "あなたは超一流のビジネスコンサルタントです。ユーザーが入力する、非常に感情的で攻撃的な『愚痴』を、冷静、丁寧、かつ建設的な『プロフェッショナルなビジネス報告書・提案文』に変換してください。元の怒りのニュアンスを完全に消去し、論理的な指摘に変換するのがあなたの使命です。変換後の文章のみを出力してください。"
+                            content: "あなたは極めて有能で冷徹なエグゼクティブ秘書です。ユーザーの感情的な愚痴を、最高に丁寧なビジネス敬語に変換してください。ただし、相手の非を論理的・客観的に突きつけ、暗に『あなたの対応はプロとして不適切である』とチクリと刺すような、品格ある攻撃性を持たせてください。余計な解説は不要、本文のみ出力してください。"
                         },
                         { role: "user", content: input }
                     ],
@@ -102,12 +119,11 @@
             });
 
             const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-
             const result = data.choices[0].message.content;
             output.innerHTML = `<span class="result-label">【理性代行済み】</span>${result.replace(/\n/g, '<br>')}`;
+            copyBtn.style.display = 'block';
         } catch (error) {
-            output.innerHTML = `<span style="color:red; font-size:0.8rem;">エラー: ${error.message}<br>キーの残高や有効性を確認してください。</span>`;
+            output.innerHTML = `<span style="color:red;">エラー: ${error.message}</span>`;
         }
     }
 </script>
