@@ -10,11 +10,9 @@
         h1 { color: #007bff; font-size: 1.8rem; margin: 10px 0 5px; }
         .subtitle { font-size: 0.85rem; color: #666; margin-bottom: 20px; }
         
-        /* 入力エリア */
         textarea { width: 100%; height: 140px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; margin-bottom: 10px; resize: none; outline: none; transition: border-color 0.3s; }
         textarea:focus { border-color: #007bff; }
         
-        /* ボタン類 */
         .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         button { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
         .btn-convert { grid-column: span 2; background-color: #007bff; color: white; font-size: 17px; margin-bottom: 5px; }
@@ -22,13 +20,11 @@
         .btn-clear { background-color: #e4e6eb; color: #4b4b4b; }
         .btn-copy { background-color: #28a745; color: white; display: none; }
         
-        /* 出力エリア */
         #output-area { width: 100%; min-height: 100px; padding: 20px; background-color: #fff; border-left: 6px solid #28a745; border-radius: 8px; text-align: left; margin-top: 15px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-size: 15px; line-height: 1.6; }
         .result-label { display: block; font-weight: bold; color: #28a745; margin-bottom: 8px; font-size: 0.75rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .loading { color: #888; text-align: center; padding: 20px; font-style: italic; }
 
-        /* 隠し設定画面 */
-        .secret-gate { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; cursor: pointer; z-index: 10; }
+        .secret-gate { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; cursor: pointer; z-index: 10; opacity: 0; }
         #settings-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); z-index: 100; width: 85%; max-width: 320px; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 99; }
         #api-key-input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
@@ -40,7 +36,7 @@
     <h1>Guchi-Converter</h1>
     <p class="subtitle">AIがあなたの理性を代行します</p>
 
-    <textarea id="input-text" placeholder="ここに愚痴を入力... (例: beef, onion... じゃなくて怒りの感情を！)"></textarea>
+    <textarea id="input-text" placeholder="例：上司の指示がコロコロ変わって困る！"></textarea>
     
     <div class="btn-group">
         <button class="btn-convert" onclick="convertGuchi()">プロの報告書に変換</button>
@@ -98,7 +94,7 @@
         if (!key) { alert('右下の隠しボタンから設定してください'); return; }
 
         output.style.display = 'block';
-        output.innerHTML = '<div class="loading">高度な理性を構築中...</div>';
+        output.innerHTML = '<div class="loading">論理的な反論を構築中...</div>';
         copyBtn.style.display = 'none';
 
         try {
@@ -110,7 +106,7 @@
                     messages: [
                         {
                             role: "system",
-                            content: "あなたは極めて有能で冷徹なエグゼクティブ秘書です。ユーザーの感情的な愚痴を、最高に丁寧なビジネス敬語に変換してください。ただし、相手の非を論理的・客観的に突きつけ、暗に『あなたの対応はプロとして不適切である』とチクリと刺すような、品格ある攻撃性を持たせてください。余計な解説は不要、本文のみ出力してください。"
+                            content: "あなたは極めて有能で冷徹なエグゼクティブ秘書、兼、ビジネス戦略家です。ユーザーの感情的な愚痴（特に理不尽な上司や無能な同僚への怒り）を、最高に丁寧なビジネス敬語に変換してください。ただし、表面上は謙虚な姿勢を保ちつつ、相手の論理破綻、マネジメント力不足、社会的責任の欠如を、逃げ道のない客観的正論でチクリと刺すような『品格ある攻撃性』を持たせてください。余計な挨拶や解説は不要、本文のみ出力してください。"
                         },
                         { role: "user", content: input }
                     ],
